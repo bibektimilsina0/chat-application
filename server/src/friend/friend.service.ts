@@ -125,43 +125,73 @@ export class FriendService {
 //     return friends;
 //   }
   // chat.service.ts
-async listFriends(userId: number) {
-  const friendRequests = await this.prisma.friendRequest.findMany({
-    where: {
-      OR: [
-        { senderId: userId, status: 'accepted' },
-        { receiverId: userId, status: 'accepted' },
-      ],
-    },
-    include: {
-      sender: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
+async listFriends(
+  userId: number,
+  page: number = 1,
+  limit: number = 10
+) {
+  // Calculate offset for pagination
+  const skip = (page - 1) * limit;
+  
+  const [friendRequests, totalCount] = await Promise.all([
+    this.prisma.friendRequest.findMany({
+      where: {
+        OR: [
+          { senderId: userId, status: 'accepted' },
+          { receiverId: userId, status: 'accepted' },
+        ],
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        receiver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
         },
       },
-      receiver: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
+      skip,  // Pagination offset
+      take: limit,  // Number of items per page
+      orderBy: {
+        updatedAt: 'desc',  // Order by most recent
       },
-    },
-  });
+    }),
+    this.prisma.friendRequest.count({
+      where: {
+        OR: [
+          { senderId: userId, status: 'accepted' },
+          { receiverId: userId, status: 'accepted' },
+        ],
+      },
+    }),
+  ]);
 
-  // Transform the data to return just the friend (other user)
-  return friendRequests.map(request => {
-    // Determine who is the friend (the other user)
+  // Transform the data
+  const friends = friendRequests.map(request => {
     const friend = request.senderId === userId ? request.receiver : request.sender;
-    
     return {
       id: friend.id,
       name: friend.name,
       email: friend.email,
     };
   });
+
+  return {
+    data: friends,
+    meta: {
+      totalCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      limit,
+    },
+  };
 }
   async listFriendRequests(userId: number) {
     const requests = await this.prisma.friendRequest.findMany({
