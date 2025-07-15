@@ -41,6 +41,7 @@ function Chat() {
     
     // Filter users with memoization
     const filteredUsers = useMemo(() => {
+        if (!Array.isArray(users)) return [];
         return users.filter(user =>
             user.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
         );

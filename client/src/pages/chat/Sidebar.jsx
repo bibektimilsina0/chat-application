@@ -8,6 +8,7 @@ import Profile from './Profile';
 
 function Sidebar({ searchTerm, setSearchTerm, users, currentChat, selectUser, getStatusColor,setShowFriendRequests,setShowUserSearch,messages }) {
     const filteredUsers = useMemo(() => {
+        if (!Array.isArray(users)) return [];
         return users.filter(user =>
             user.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
