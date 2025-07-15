@@ -3,7 +3,7 @@ import axios from 'axios';
 import { sendFriendRequest } from '../redux/slices/chatSlice';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000', // your backend URL
+  baseURL:import.meta.env.VITE_BACKEND_URL,
   withCredentials: true, // send cookies
 });
 
