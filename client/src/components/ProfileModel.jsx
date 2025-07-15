@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { logoutUser } from "../redux/slices/authSlice";
 function ProfileModel({setShowProfileModal}) {
-    const {user,logoutUser}=useSelector((state) => state.auth);
+    const {user}=useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
       const getInitials = (name = "") =>
@@ -14,6 +14,7 @@ function ProfileModel({setShowProfileModal}) {
   const handleLogout = () => {
     // if using redux action for logout
     dispatch(logoutUser());
+    setShowProfileModal(false)
     navigate("/login");
   };
     return ( 

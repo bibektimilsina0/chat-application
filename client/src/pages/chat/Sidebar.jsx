@@ -7,11 +7,7 @@ import UserCard from './UserCard';
 import Profile from './Profile'; 
 
 function Sidebar({ searchTerm, setSearchTerm, users, currentChat, selectUser, getStatusColor,setShowFriendRequests,setShowUserSearch,messages }) {
-    const filteredUsers = useMemo(() => {
-        return users.filter(user =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [users, searchTerm]);
+
     const {
         friendRequests,
     } = useSelector((state) => state.chat);
@@ -57,7 +53,7 @@ function Sidebar({ searchTerm, setSearchTerm, users, currentChat, selectUser, ge
 
             {/* User list */}
             <div className="flex-1 overflow-y-auto">
-                {filteredUsers.map((user) => (
+                {users.map((user) => (
                     <UserCard
                         key={user.id}
                         user={user}

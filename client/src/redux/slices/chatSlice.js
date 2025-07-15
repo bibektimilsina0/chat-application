@@ -8,7 +8,7 @@ export const fetchFriends = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await Api.getFriends();
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch friends');
     }
